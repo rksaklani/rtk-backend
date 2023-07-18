@@ -23,8 +23,6 @@ let studentPostMethod = async (req, res) => {
 let studentGetMethod = async (_req, res) => {
   try {
     const user = await student.find();
-    // console.log(user);
-
     res.status(200).send(user);
   } catch (err) {
     res.status(500).send(err);

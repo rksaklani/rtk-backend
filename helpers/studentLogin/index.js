@@ -1,9 +1,7 @@
 const StudentLogin = require("../../models/login/login");
-const bcrypt=require("bcrypt")
-const crypto = require('crypto');
+// const bcrypt=require("bcrypt")
 const nodemailer = require('nodemailer');
-const cron = require('node-cron');
-const sendPasswordResetEmail = async (email, resetTokens) => {
+const sendPasswordResetEmail = async (email, otp) => {
   // Create a nodemailer transporter with your email service credentials
   const transporter = nodemailer.createTransport({
     // Configure the transporter options
@@ -42,7 +40,7 @@ const sendPasswordResetEmail = async (email, resetTokens) => {
   </div>
   <p style="font-size:1.1em">Hi,</p>
   <p>Thank you for choosing my journey. Use the following OTP to complete your Password Recovery Procedure. OTP is valid for 5 minutes</p>
-  <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${resetTokens}</h2>
+  <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${otp}</h2>
   <p style="font-size:0.9em;">Regards,<br />Rk Saklani</p>
   <hr style="border:none;border-top:1px solid #eee" />
   <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
@@ -74,8 +72,6 @@ const sendPasswordResetEmail = async (email, resetTokens) => {
 let studentGetLogin = async (_req, res) => {
     try {
       const user = await StudentLogin.find();
-      // console.log(user);
-  
       res.status(201).send(user);
     } catch (err) {
       res.status(500).send(err);
@@ -135,36 +131,6 @@ let studentGetLogin = async (_req, res) => {
   };
 
 
-//run the cron job for expire the token 
-
-// const removeExpiredTokens = async () => {
-//   try {
-//     const currentTime = new Date();
-//     const expirationTime = new Date(currentTime.getTime() + 120000); // Current time + 2 minutes
-//     const expiredTokens = await StudentLogin.find({ resetTokenExpires: { $lt: expirationTime } });
-
-//     // for (const student of expiredTokens) {
-//     //   student.tokens.token = null;
-//     //   student.resetTokenExpires = null;
-//     //   await student.save();
-//     // }
-//     for (const student of expiredTokens) {
-//       student.tokens = []; // Remove all tokens by assigning an empty array
-//       student.resetTokenExpires = null;
-//       await student.save();
-//     }
-//     console.log("Expired tokens removed from the database");
-//   } catch (error) {
-//     console.error("Error removing expired tokens:", error);
-//   }
-// };
-
-// Run the removeExpiredTokens task periodically
-// cron.schedule('*/2 * * * *', removeExpiredTokens); // Run every 24 hours (adjust as needed)
-
-
-
-
 
   let studentForgotPassword = async (req, res) => {
     try {
@@ -179,17 +145,17 @@ let studentGetLogin = async (_req, res) => {
     
   
       // Generate a reset token and save it in the user document
-      const resetTokens =Math.floor((Math.random()*10000)+4);
-      user.resetToken = resetTokens;
+      const otp =Math.floor((Math.random()*10000)+4);
+      user.otp = otp;
       user.resetTokenExpires = new Date(Date.now() + 3600000) // Token expires in 1 hour
       await user.save();
   
       // Send the password reset email
-      await sendPasswordResetEmail(email, resetTokens);
+      await sendPasswordResetEmail(email, otp);
   
       return res
         .status(200)
-        .json({ message: "Password reset email sent successfully", otp:resetTokens });
+        .json({ message: "Password reset email sent successfully", otp:otp });
     } 
     catch (error) {
       console.error(error);
@@ -204,11 +170,11 @@ let studentGetLogin = async (_req, res) => {
 
   let studentResetPassword = async (req, res) => {
     try {
-      const { resetToken, password,  email,confirm_Password } = req.body;
+      const { otp, password,  email,confirm_Password } = req.body;
       if (!password ) {
         return res.status(400).json({ error: "Please provide both password and confirm password" });
       }
-      if (resetToken) {
+      if (otp) {
         const user = await StudentLogin.findOne({ email });
         if (!user) {
           return res.status(404).json({ error: "User not found" });
@@ -220,7 +186,7 @@ let studentGetLogin = async (_req, res) => {
           { new: true }
         );
       
-        //  await user.resetToken.deleteOne();
+        //  await user.otp.deleteOne();
       }
       return res.status(200).json({ message: "Password reset successful" });
     } catch (error) {
@@ -229,62 +195,19 @@ let studentGetLogin = async (_req, res) => {
     }
   };
   
-  // const studentResetPassword = async (userId, token, password ) => {
-  //   const { resetToken, password, _id } = req.body;
-  //   let passwordResetToken = await StudentLogin.findOne({ _id });
   
-  //   if (!passwordResetToken) {
-  //     throw new Error("Invalid or expired password reset token");
-  //   }
-  
-  //   console.log(passwordResetToken.token, token);
-  
-  //   const isValid = await bcrypt.compare(token, passwordResetToken.token);
-  
-  //   if (!isValid) {
-  //     throw new Error("Invalid or expired password reset token");
-  //   }
-  
-  //   const hash = await bcrypt.hash(password, Number(bcryptSalt));
-  
-  //   await User.updateOne(
-  //     { _id: userId },
-  //     { $set: { password: hash } },
-  //     { new: true }
-  //   );
-  
-  //   // const user = await User.findById({ _id: userId });
-  
-  //   // sendEmail(
-  //   //   user.email,
-  //   //   "Password Reset Successfully",
-  //   //   {
-  //   //     name: user.name,
-  //   //   },
-  //   //   "./template/resetPassword.handlebars"
-  //   // );
-  
-  //   await passwordResetToken.deleteOne();
-  
-  //   return { message: "Password reset was successful" };
-  // };
-
-
-
-
-
 
   let studentVerifyingOTP= async (req, res) => {
 
     try {
-      const { resetToken, email, } = req.body;
+      const { otp, email, } = req.body;
   
-      if (!resetToken || !email) {
+      if (!otp || !email) {
         return res.status(400).json({ error: "Email is not provided" });
       }
-      const data = await StudentLogin.findOne({ email,resetToken});
-      console.log(data.resetToken)
-      if (data.resetToken && data.email) {
+      const data = await StudentLogin.findOne({ email,otp});
+      console.log(data.otp)
+      if (data.otp && data.email) {
         const currentTime = Date.now();
         const tokenExpires = new Date(data.resetTokenExpires).getTime();
         const timeDifference = tokenExpires - currentTime;

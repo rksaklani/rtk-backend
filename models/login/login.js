@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 const jwt=require("jsonwebtoken")
 const studentSchemaLogin = new mongoose.Schema({
     name:{
@@ -26,7 +25,7 @@ const studentSchemaLogin = new mongoose.Schema({
             require:true
          }
          } ],
-         resetToken: {
+         otp: {
           type: Number,
           default: null
         },
@@ -51,14 +50,6 @@ studentSchemaLogin.methods.generateAuthToken = async function () {
     }
   };
   
-//   studentSchemaLogin.pre("save", async function (next) {
-//     if (this.isModified("password")) {
-//       this.password = bcrypt.hashSync(this.password, 12);
-//       this.confirm_Password = bcrypt.hashSync(this.confirm_Password, 12);
-//     }
-//     next();
-//   });
-
 
   studentSchemaLogin.pre("save", async function (next) {
     if (this.isModified("password")) {

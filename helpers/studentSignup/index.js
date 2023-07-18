@@ -1,8 +1,6 @@
 const StudentLogin = require("../../models/login/login");
 
 
-
-
 let studentGetSignup = async (_req, res) => {
     try {
       const user = await StudentLogin.find();
