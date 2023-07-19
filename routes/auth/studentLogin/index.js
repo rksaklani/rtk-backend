@@ -1,6 +1,7 @@
 const {
     studentGetLogin,
-    studentPostLogin
+    studentPostLogin,
+    studentGetIdByLogin
     
   } = require("../../../helpers/studentLogin/index");
   const express = require("express");
@@ -8,7 +9,7 @@ const {
 
 
 
-router.post("/login", (req, res) => {
+  router.post("/login", (req, res) => {
     studentPostLogin(req, res);
   });
   
@@ -16,5 +17,8 @@ router.post("/login", (req, res) => {
     studentGetLogin(req, res);
   });
   
+  router.get("/login/:id", (req, res) => {
+    studentGetIdByLogin(req, res);
+  });
 
   module.exports = router;

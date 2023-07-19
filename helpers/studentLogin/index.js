@@ -78,6 +78,15 @@ let studentGetLogin = async (_req, res) => {
     }
   };
 
+  let studentGetIdByLogin = async (req, res) => {
+    try {
+      const _id=req.params.id
+      const user = await StudentLogin.findOne({ _id });
+      res.status(201).send(user);
+    } catch (err) {
+      res.status(500).send(err);
+    }
+  };
 
 
 
@@ -99,6 +108,9 @@ let studentGetLogin = async (_req, res) => {
           // const isMatch = await bcrypt.compare(password, userStudent.password);
       
           const isMatch = password===userStudent.password
+          //removing the previous token 
+          userStudent.tokens = [];
+           await userStudent.save();
           //Token generation
           const token = await userStudent.generateAuthToken();
           console.log(token);
@@ -146,8 +158,9 @@ let studentGetLogin = async (_req, res) => {
   
       // Generate a reset token and save it in the user document
       const otp =Math.floor((Math.random()*10000)+4);
+      const expires_In=new Date(Date.now() + 120000) 
       user.otp = otp;
-      user.resetTokenExpires = new Date(Date.now() + 3600000) // Token expires in 1 hour
+      user.expires_In = expires_In
       await user.save();
   
       // Send the password reset email
@@ -155,7 +168,7 @@ let studentGetLogin = async (_req, res) => {
   
       return res
         .status(200)
-        .json({ message: "Password reset email sent successfully", otp:otp });
+        .json({ message: "Password reset email sent successfully", otp:otp,expires_In:expires_In });
     } 
     catch (error) {
       console.error(error);
@@ -186,7 +199,9 @@ let studentGetLogin = async (_req, res) => {
           { new: true }
         );
       
-        //  await user.otp.deleteOne();
+        user.otp = null;
+        await user.save();
+   
       }
       return res.status(200).json({ message: "Password reset successful" });
     } catch (error) {
@@ -209,7 +224,7 @@ let studentGetLogin = async (_req, res) => {
       console.log(data.otp)
       if (data.otp && data.email) {
         const currentTime = Date.now();
-        const tokenExpires = new Date(data.resetTokenExpires).getTime();
+        const tokenExpires = new Date(data.expires_In).getTime();
         const timeDifference = tokenExpires - currentTime;
         if (timeDifference < 0) {
           return res.status(400).json({ error: "Token is expired" });
@@ -225,6 +240,7 @@ let studentGetLogin = async (_req, res) => {
 
   }
   module.exports = {
+    studentGetIdByLogin,
     studentGetLogin,
     studentPostLogin,
     studentResetPassword,
