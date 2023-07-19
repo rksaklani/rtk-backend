@@ -29,7 +29,7 @@ const studentSchemaLogin = new mongoose.Schema({
           type: Number,
           default: null
         },
-        resetTokenExpires: {
+        expires_In: {
           type: Date,
           default: null
         },
