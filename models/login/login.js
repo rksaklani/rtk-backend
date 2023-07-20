@@ -33,6 +33,10 @@ const studentSchemaLogin = new mongoose.Schema({
           type: Date,
           default: null
         },
+        otpStatus:{
+          type: Boolean,
+          default: false
+        }
 })
 
   

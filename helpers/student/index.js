@@ -13,10 +13,8 @@ let studentPostMethod = async (req, res) => {
       const user = new student(payload);
       const result = await user.save();
       res.status(201).send(result);
-    
-    console.log("result",result)
   } catch (error) {
-    console.log(error);
+    res.status(500).send(error)
   }
 };
 
@@ -35,9 +33,7 @@ let studentGetById = async (req, res) => {
     const resData = await student.findById(_id, req.body, {
       //it update the value
       new: true,
-    });
-    console.log(resData);
-
+    })
     res.status(200).send(resData);
   } catch (err) {
     res.status(500).send(err);
@@ -51,8 +47,6 @@ let studentUpdateById = async (req, res) => {
       //it update the value
       new: true,
     });
-    console.log(resData);
-
     res.status(202).send(resData);
   } catch (err) {
     res.status(500).send(err);
@@ -66,7 +60,6 @@ let studentDeleteById = async (req, res) => {
     if (!_id) {
       return res.status(400).send();
     }
-    console.log(StudentData);
     res.send(StudentData);
   } catch (err) {
     res.status(500).send(err);

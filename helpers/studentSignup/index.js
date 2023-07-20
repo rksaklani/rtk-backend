@@ -4,8 +4,6 @@ const StudentLogin = require("../../models/login/login");
 let studentGetSignup = async (_req, res) => {
     try {
       const user = await StudentLogin.find();
-      // console.log(user);
-  
       res.status(201).send(user);
     } catch (err) {
       res.status(500).send(err);
@@ -36,7 +34,7 @@ if(userData){
 }
 
 }catch(error){
-  console.log(error);
+  res.status(500).send(error);
 }
 
   };

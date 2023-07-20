@@ -99,8 +99,6 @@ let studentGetLogin = async (_req, res) => {
         return res.status(400).json({ error: "Please enter the data" });
       }
       const userStudent = await StudentLogin.findOne({ email:email });
-      console.log(userStudent);
-  
       // Verifying the password in the database
       if (userStudent) {
         try {
@@ -113,7 +111,6 @@ let studentGetLogin = async (_req, res) => {
            await userStudent.save();
           //Token generation
           const token = await userStudent.generateAuthToken();
-          console.log(token);
           // Creating cookie
           res.cookie("token", token, {
             // Expire the token and timing when it expires
@@ -130,14 +127,13 @@ let studentGetLogin = async (_req, res) => {
             return res.status(200).json({ message: "Your login was successful" ,token:token});
           }
         } catch (error) {
-          console.error(error);
+      
           return res.status(500).json({ error: "Error during password comparison or token generation" });
         }
       } else {
         return res.status(400).json({ error: "Invalid Credentials" });
       }
     } catch (error) {
-      console.error(error);
       return res.status(500).json({ error: "Error during user retrieval" });
     }
   };
@@ -158,8 +154,8 @@ let studentGetLogin = async (_req, res) => {
   
       // Generate a reset token and save it in the user document
       const otp =Math.floor(Math.random() * 9000) + 1000
-      const expires_In=new Date(Date.now() + 36000) 
-      
+      const expires_In=new Date(Date.now() + 120000) 
+      user.otpStatus=true
       user.otp = otp;
       user.expires_In = expires_In
       await user.save();
@@ -169,10 +165,9 @@ let studentGetLogin = async (_req, res) => {
   
       return res
         .status(200)
-        .json({ message: "Password reset email sent successfully", status:true,expires_In:expires_In });
+        .json({ message: "Password reset email sent successfully",expires_In:expires_In });
     } 
     catch (error) {
-      console.error(error);
       return res
         .status(500)
         .json({ error: "Error during password reset process" });
@@ -184,12 +179,12 @@ let studentGetLogin = async (_req, res) => {
 
   let studentResetPassword = async (req, res) => {
     try {
-      const { status, password,  email,confirm_Password } = req.body;
-      if (!password ) {
+      const {  password,  email,confirm_Password } = req.body;
+      if (!password && !confirm_Password ) {
         return res.status(400).json({ error: "Please provide both password and confirm password" });
       }
-      if (status) {
-        const user = await StudentLogin.findOne({ email });
+      const user= await StudentLogin.findOne({ email });
+      if (user.otpStatus) {
         if (!user) {
           return res.status(404).json({ error: "User not found" });
         }
@@ -199,14 +194,13 @@ let studentGetLogin = async (_req, res) => {
           { $set: {  password, confirm_Password}},
           { new: true }
         );
-      
+       user.otpStatus=false
         user.otp = null;
         await user.save();
    
       }
       return res.status(200).json({ message: "Password reset successful" });
     } catch (error) {
-      console.error(error);
       return res.status(500).json({ error: "Error during password reset" });
     }
   };
@@ -222,20 +216,20 @@ let studentGetLogin = async (_req, res) => {
         return res.status(400).json({ error: "Email is not provided" });
       }
       const data = await StudentLogin.findOne({ email,otp});
-      console.log(data.otp)
-      if (data.otp && data.email) {
+      const parsedOtp = parseInt(otp);
+      const isValidOtp=data.otp===parsedOtp;
+      if (isValidOtp && data.email) {
         const currentTime = Date.now();
         const tokenExpires = new Date(data.expires_In).getTime();
         const timeDifference = tokenExpires - currentTime;
         if (timeDifference < 0) {
-          return res.status(400).json({ error: "Token is expired",status:false });
+          return res.status(400).json({ error: "Token is expired"});
         }
-        return res.status(200).json({ message: "OTP is Verified",status:true }); 
+        return res.status(200).json({ message: "OTP is Verified" }); 
         }else{
-          return res.status(404).json({ error: "Wrong OTP",status:false });
+          return res.status(404).json({ error: "Wrong OTP"});
         }
     } catch (error) {
-      console.error(error);
       return res.status(500).json({ error: "Wrong OTP" });
     }
 
