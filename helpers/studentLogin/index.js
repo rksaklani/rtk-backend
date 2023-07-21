@@ -1,6 +1,8 @@
-const StudentLogin = require("../../models/login/login");
+const StudentLogin = require("../../models/auth/login/login");
 // const bcrypt=require("bcrypt")
 const nodemailer = require('nodemailer');
+const Token = require("../../models/auth/token/token");
+const Otp = require("../../models/auth/otp/otp");
 const sendPasswordResetEmail = async (email, otp) => {
   // Create a nodemailer transporter with your email service credentials
   const transporter = nodemailer.createTransport({
@@ -106,9 +108,6 @@ let studentGetLogin = async (_req, res) => {
           // const isMatch = await bcrypt.compare(password, userStudent.password);
       
           const isMatch = password===userStudent.password
-          //removing the previous token 
-          userStudent.tokens = [];
-           await userStudent.save();
           //Token generation
           const token = await userStudent.generateAuthToken();
           // Creating cookie
@@ -151,14 +150,15 @@ let studentGetLogin = async (_req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
     
-  
-      // Generate a reset token and save it in the user document
+      // Generate a reset otp and save it in the user document
+      const userOtp = new Otp({ userId:user._id });
+      await Otp.deleteOne({ userId:user._id });
       const otp =Math.floor(Math.random() * 9000) + 1000
       const expires_In=new Date(Date.now() + 120000) 
-      user.otpStatus=true
-      user.otp = otp;
-      user.expires_In = expires_In
-      await user.save();
+      userOtp.otpStatus=true
+      userOtp.otp = otp;
+      userOtp.expires_In = expires_In
+      await userOtp.save();
   
       // Send the password reset email
       await sendPasswordResetEmail(email, otp);
@@ -184,7 +184,8 @@ let studentGetLogin = async (_req, res) => {
         return res.status(400).json({ error: "Please provide both password and confirm password" });
       }
       const user= await StudentLogin.findOne({ email });
-      if (user.otpStatus) {
+      const userOtp = await Otp.findOne({ userId:user._id });
+      if (userOtp.otpStatus) {
         if (!user) {
           return res.status(404).json({ error: "User not found" });
         }
@@ -194,9 +195,9 @@ let studentGetLogin = async (_req, res) => {
           { $set: {  password, confirm_Password}},
           { new: true }
         );
-       user.otpStatus=false
-        user.otp = null;
-        await user.save();
+       userOtp.otpStatus=false
+        userOtp.otp = null;
+        await userOtp.save();
    
       }
       return res.status(200).json({ message: "Password reset successful" });
@@ -215,12 +216,13 @@ let studentGetLogin = async (_req, res) => {
       if (!otp &&!email) {
         return res.status(400).json({ error: "Email is not provided" });
       }
-      const data = await StudentLogin.findOne({ email,otp});
+      const data = await StudentLogin.findOne({ email});
+      const userOtp = await Otp.findOne({ userId:data._id });
       const parsedOtp = parseInt(otp);
-      const isValidOtp=data.otp===parsedOtp;
+      const isValidOtp=userOtp.otp===parsedOtp;
       if (isValidOtp && data.email) {
         const currentTime = Date.now();
-        const tokenExpires = new Date(data.expires_In).getTime();
+        const tokenExpires = new Date(userOtp.expires_In).getTime();
         const timeDifference = tokenExpires - currentTime;
         if (timeDifference < 0) {
           return res.status(400).json({ error: "Token is expired"});

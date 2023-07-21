@@ -1,59 +1,25 @@
 const mongoose = require('mongoose');
 const jwt=require("jsonwebtoken")
+const Token = require('../token/token');
+const dotenv = require("dotenv");
+dotenv.config({ path: "./config.env" });
+const SECRET_KEY = process.env.SECRET_kEY;
 const studentSchemaLogin = new mongoose.Schema({
     name:{
         type:String,
     },
- 
     email:{
         type:String,
     },
-   
-  
     password:{
         type: String,
         unique: true, 
-     
     },
     confirm_Password:{
         type: String,
         unique: true, 
     },
-    tokens:[
-        { token: {
-             type: String,
-            require:true
-         }
-         } ],
-         otp: {
-          type: Number,
-          default: null
-        },
-        expires_In: {
-          type: Date,
-          default: null
-        },
-        otpStatus:{
-          type: Boolean,
-          default: false
-        }
 })
-
-  
-
-
-
-studentSchemaLogin.methods.generateAuthToken = async function () {
-    try {
-      const token = jwt.sign({ _id: this._id }, "your_secret_key_here");
-      this.tokens = this.tokens.concat({ token });
-      await this.save();
-      return token;
-    } catch (error) {
-      throw new Error("Error generating authentication token");
-    }
-  };
-  
 
   studentSchemaLogin.pre("save", async function (next) {
     if (this.isModified("password")) {
@@ -66,8 +32,21 @@ studentSchemaLogin.methods.generateAuthToken = async function () {
   });
 
 
+
+
+  studentSchemaLogin.methods.generateAuthToken = async function () {
+    try {
+      const token = jwt.sign({ _id: this._id }, SECRET_KEY);
+      // Create and save the token as a separate document in the 'Token' collection
+      await Token.deleteMany({ userId: this._id });
+      const tokenDocument = new Token({ userId: this._id, token });
+      await tokenDocument.save();
+      return token;
+    } catch (error) {
+      throw new Error('Error generating authentication token');
+    }
+  };
+  
   const StudentLogin = mongoose.model('StudentLogin', studentSchemaLogin);
   
   module.exports = StudentLogin;
-
-  
