@@ -111,14 +111,16 @@ let studentGetLogin = async (_req, res) => {
           //Token generation
           const token = await userStudent.generateAuthToken();
           // Creating cookie
-          res.cookie("token", token, {
-            // Expire the token and timing when it expires
-            // expires: new Date(Date.now() + 25892000000),
-            expires: new Date(Date.now() + 120000),
-            // Where we add the cookie
-            httpOnly: true
-          });
-  
+          const expirationTime = new Date(Date.now() + 120000); // 120000 milliseconds (2 minutes) from now
+           res.cookie("token", token, {
+            expires: expirationTime,
+               httpOnly: true
+           });
+    
+// console.log("Token expiration time:", expirationTime);
+// const tokenDocument = new Token({  expiresIn:expirationTime });
+// await tokenDocument.save();
+
           if (!isMatch) {
             return res.status(400).json({ error: "Invalid Credentials" });
           } else {

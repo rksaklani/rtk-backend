@@ -13,24 +13,8 @@ let studentGetSignup = async (_req, res) => {
     }
   };
 
-  // const signup = async (data) => {
-  //   let user = await User.findOne({ email: data.email });
-  //   if (user) {
-  //     throw new Error("Email already exist", 422);
-  //   }
-  //   user = new User(data);
-  //   const token = JWT.sign({ id: user._id }, JWT_SECRET);
-  //   await user.save();
+
   
-  //   return (data = {
-  //     userId: user._id,
-  //     email: user.email,
-  //     name: user.name,
-  //     token: token,
-  //   });
-  // };
-
-
 let studentPostSignup = async (req, res) => {
     const {name,email,password,confirm_Password}=req.body;
 if (!name,!email,!password,!confirm_Password){
@@ -62,6 +46,8 @@ if(userData){
 
   };
   
+
+
 
   module.exports = {
     studentGetSignup,

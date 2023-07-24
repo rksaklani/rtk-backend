@@ -28,17 +28,23 @@ let studentGetMethod = async (_req, res) => {
 };
 
 let studentGetById = async (req, res) => {
+  const studentId = req.params.id;
   try {
-    const _id = req.params.id;
-    const resData = await student.findById(_id, req.body, {
-      //it update the value
-      new: true,
-    })
-    res.status(200).send(resData);
-  } catch (err) {
-    res.status(500).send(err);
+    // Query the student by the 'id' field
+    const student = await Student.findOne({ id: studentId });
+
+    if (!student) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+
+    // Student found, return the student data
+    res.json(student);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+
 
 let studentUpdateById = async (req, res) => {
   try {
