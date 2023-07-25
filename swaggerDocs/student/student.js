@@ -1,7 +1,3 @@
-const express = require('express');
-const router = express.Router();
-
-
 //get the list of the all student
 
 /**
@@ -132,6 +128,3 @@ const router = express.Router();
  *               $ref: '#/components/schemas/Error'
  */
 
-
-
-module.exports = router;

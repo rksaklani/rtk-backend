@@ -1,13 +1,13 @@
-const express = require('express');
-const router = express.Router();
-
 //signup
+
 /**
  * @swagger
  * tags:
  *   name: Auth
  *   description: API endpoints related to Auth
  */
+
+
 /**
  * @swagger
  * components:
@@ -47,6 +47,7 @@ const router = express.Router();
  *           description: Error message.
  */
 
+
 /**
  * @swagger
  * /api/signup:
@@ -82,5 +83,3 @@ const router = express.Router();
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-
-module.exports = router;

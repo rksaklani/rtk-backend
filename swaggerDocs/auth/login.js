@@ -1,7 +1,5 @@
-const express = require('express');
-const router = express.Router();
-
 //login
+
 /**
  * @swagger
  * tags:
@@ -41,6 +39,7 @@ const router = express.Router();
  *           description: Error message.
  */
 
+
 /**
  * @swagger
  * /api/login:
@@ -78,4 +77,3 @@ const router = express.Router();
  */
 
 
-module.exports = router;
