@@ -17,6 +17,9 @@ const option={
       './swaggerDocs/auth/login.js',
       './swaggerDocs/auth/signup.js',
       './swaggerDocs/student/student.js',
+      './swaggerDocs/studentImageUpload/studentImageUpload.js',
+      './swaggerDocs/studentImageUpload/studentImageGetById.js',
+      './swaggerDocs/studentImageUpload/studentImageGetAllList.js',
     ],
   }
   const swaggerSpec= swaggerJsDoc(option)
