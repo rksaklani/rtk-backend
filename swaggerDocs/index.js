@@ -14,17 +14,20 @@ const option={
       ]
     },
     apis: [
+      //auth
       './swaggerDocs/auth/login.js',
       './swaggerDocs/auth/signup.js',
       './swaggerDocs/auth/forgetPassword.js',
       './swaggerDocs/auth/verifyOtp.js',
       './swaggerDocs/auth/resetPassword.js',
+      //Student
       './swaggerDocs/student/studentPost.js',
       './swaggerDocs/student/studentGetById.js',
       './swaggerDocs/student/studentDeleteById.js',
       './swaggerDocs/student/studentDeleteAll.js',
       './swaggerDocs/student/studentGetAll.js',
       './swaggerDocs/student/studentUpdateById.js',
+      //Student Images
       './swaggerDocs/studentImageUpload/studentImageUpload.js',
       './swaggerDocs/studentImageUpload/studentImageGetById.js',
       './swaggerDocs/studentImageUpload/studentImageGetAllList.js',
