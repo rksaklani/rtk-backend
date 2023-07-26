@@ -6,8 +6,6 @@
  *     Student:
  *       type: object
  *       properties:
- *         id:
- *           type: string
  *         title:
  *           type: string
  *         timestamp:
@@ -23,29 +21,32 @@
  */
 
 
-
-
 /**
  * @swagger
- * /api/get_student_by_id/{id}:
- *   get:
- *     summary: This API is used to show the user from the user list by ID.
- *     description: This API is used to check if the GET by ID method is working or not.
+ * /api/student_delete/{id}:
+ *   delete:
+ *     summary: Delete student image by ID.
+ *     description: Retrieve a student's image by its ID.
  *     tags:
  *       - Student
  *     parameters:
  *       - in: path
  *         name: id
- *         description: Numeric ID required
+ *         required: true
  *         schema:
  *           type: string
+ *         description: ID of the student image to retrieve.
  *     responses:
- *       200:
- *         description: Success. The GET method is working.
+ *       '200':
+ *         description: Successful operation. Returns the student image.
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Student'
+ *               $ref: '#/components/schemas/StudentImage'
+ *       '404':
+ *         description: Student image not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */

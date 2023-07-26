@@ -72,12 +72,26 @@ let studentDeleteById = async (req, res) => {
   }
 };
 
+let studentDeleteAll= async(res,req)=>{
+  try {
+    // Delete all student images
+    const result = await student.deleteMany({});
+    console.log(result);
+
+    res.send(result);
+  } catch (err) {
+    // Handle any errors that occurred during the process
+    res.status(500).send(err);
+  }
+}
+
 module.exports = {
   studentPostMethod,
   studentGetMethod,
   studentGetById,
   studentUpdateById,
   studentDeleteById,
+  studentDeleteAll
 };
 
 

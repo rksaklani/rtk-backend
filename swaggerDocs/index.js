@@ -16,8 +16,12 @@ const option={
     apis: [
       './swaggerDocs/auth/login.js',
       './swaggerDocs/auth/signup.js',
-      './swaggerDocs/student/student.js',
+      './swaggerDocs/student/studentPost.js',
       './swaggerDocs/student/studentGetById.js',
+      './swaggerDocs/student/studentDeleteById.js',
+      './swaggerDocs/student/studentDeleteAll.js',
+      './swaggerDocs/student/studentGetAll.js',
+      './swaggerDocs/student/studentUpdateById.js',
       './swaggerDocs/studentImageUpload/studentImageUpload.js',
       './swaggerDocs/studentImageUpload/studentImageGetById.js',
       './swaggerDocs/studentImageUpload/studentImageGetAllList.js',
