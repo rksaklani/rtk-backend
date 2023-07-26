@@ -16,6 +16,9 @@ const option={
     apis: [
       './swaggerDocs/auth/login.js',
       './swaggerDocs/auth/signup.js',
+      './swaggerDocs/auth/forgetPassword.js',
+      './swaggerDocs/auth/verifyOtp.js',
+      './swaggerDocs/auth/resetPassword.js',
       './swaggerDocs/student/studentPost.js',
       './swaggerDocs/student/studentGetById.js',
       './swaggerDocs/student/studentDeleteById.js',
