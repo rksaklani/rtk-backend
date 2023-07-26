@@ -11,6 +11,9 @@ const studentGetIdByLogin=require("./auth/studentLogin/index")
 const studentImageUpload=require("./studentImageUpload/index")
 const studentImageDownload=require("./studentImageUpload/index")
 const studentAllImage=require("./studentImageUpload/index")
+const StudentImageUpdateById= require("./studentImageUpload/index")
+const StudentImageDeleteById=require("./studentImageUpload/index")
+const StudentAllImageDelete =require("./studentImageUpload/index")
 router.use("/", student);
 router.use("/",studentGetIdByLogin)
 router.use("/", studentLogin);
@@ -21,5 +24,7 @@ router.use("/", studentVerifyingOTP);
 router.use("/", studentImageUpload);
 router.use("/", studentImageDownload);
 router.use("/", studentAllImage);
-
+router.use("/", StudentImageUpdateById);
+router.use("/", StudentImageDeleteById);
+router.use("./",StudentAllImageDelete);
 module.exports = router;

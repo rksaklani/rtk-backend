@@ -9,7 +9,7 @@ const userRoute = require("./routes");
 
 app.use(cors());
 app.use(express.json());
-app.use("/uploads", express.static("uploads"));
+ app.use("/uploads", express.static("uploads"));
 //we need to register our router
 app.use("/api" ,userRoute);
 //This is the setup of the swagger

@@ -36,7 +36,7 @@
  *     summary: Upload student image.
  *     description: Upload a student's image.
  *     tags:
- *       - Users
+ *       - Student Image
  *     requestBody:
  *       content:
  *         multipart/form-data:  # Use multipart/form-data for file upload

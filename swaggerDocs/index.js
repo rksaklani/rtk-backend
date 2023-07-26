@@ -17,9 +17,13 @@ const option={
       './swaggerDocs/auth/login.js',
       './swaggerDocs/auth/signup.js',
       './swaggerDocs/student/student.js',
+      './swaggerDocs/student/studentGetById.js',
       './swaggerDocs/studentImageUpload/studentImageUpload.js',
       './swaggerDocs/studentImageUpload/studentImageGetById.js',
       './swaggerDocs/studentImageUpload/studentImageGetAllList.js',
+      './swaggerDocs/studentImageUpload/studentImageUpdateById.js',
+      './swaggerDocs/studentImageUpload/studentImageDeleteById.js',
+      './swaggerDocs/studentImageUpload/studentImageDeleteAllList.js',
     ],
   }
   const swaggerSpec= swaggerJsDoc(option)

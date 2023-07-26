@@ -19,12 +19,12 @@
 
 /**
  * @swagger
- * /api/all_student_image:
- *   get:
- *     summary: Get a list of all student images.
+ * /api/delete_all_student_images:
+ *   delete:
+ *     summary: Delete a list of all student images.
  *     description: Fetches a list of all student images.
  *     tags:
- *      - Student Image
+ *       - Student Image
  *     responses:
  *       '200':
  *         description: Successful response containing the list of student images.

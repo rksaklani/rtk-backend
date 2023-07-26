@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 
 const studentImageSchema = new mongoose.Schema(
     {
-      id:{
-      type: Number
-        }, 
-
     image: {
       type: String,
     },

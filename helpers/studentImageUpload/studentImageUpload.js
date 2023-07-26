@@ -1,7 +1,9 @@
 
 const studentImage = require("../../models/studentImageUpload");
-
-
+const dotenv = require("dotenv");
+dotenv.config({ path: "./config.env" });
+const BASE_URL = process.env.BASE_URL
+console.log(BASE_URL)
 let studentImageUpload = async (req, res) => {
   try {
     if (!req.file) {
@@ -12,7 +14,7 @@ let studentImageUpload = async (req, res) => {
     } else {
       //send response
       let payload = {
-        image: "uploads/" + req.file.filename,
+        image: BASE_URL +"uploads/" + req.file.filename,
         imageUrl: req.file.path
       };
      
@@ -55,5 +57,62 @@ let studentImageUpload = async (req, res) => {
   };
 
 
+  let StudentImageUpdateById = async (req, res) => {
+  
+    try {
+      const _id=req.params.id
+      const img=  BASE_URL +"uploads/" + req.file.filename
+      const resData = await studentImage.findByIdAndUpdate(
+        _id,
+        { $set:  { image: img } },
+        {
+          //it upadte the value
+          new: true,
+        }
+      );
+      console.log(resData);
+  
+      res.status(204).send(resData);
+    } catch (err) {
+      res.status(500).send(err);
+    }
+  };
+  
+  let StudentAllImageDelete = async (_req, res) => {
+    try {
+      // Delete all student images
+      const result = await studentImage.deleteMany({});
+      console.log(result);
+  
+      res.send(result);
+    } catch (err) {
+      // Handle any errors that occurred during the process
+      res.status(500).send(err);
+    }
+  };
 
-module.exports = { studentImageUpload,studentImageDownload,studentAllImage };
+  let StudentImageDeleteById = async (req, res) => {
+    try {
+      const _id = req.params.id;
+      if (!_id) {
+        return res.status(400).send();
+      }
+  
+      const StudentData = await studentImage.findByIdAndDelete(_id);
+      if (!StudentData) {
+        // If no document found with the given _id, respond with 404 Not Found
+        return res.status(404).send();
+      }
+  
+      console.log(StudentData);
+      res.send(StudentData);
+    } catch (err) {
+      // Handle any errors that occurred during the process
+      res.status(500).send(err);
+    }
+  };
+  
+
+
+
+module.exports = { studentImageUpload,studentImageDownload,studentAllImage,StudentImageUpdateById,StudentImageDeleteById,StudentAllImageDelete};

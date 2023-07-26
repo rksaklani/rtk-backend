@@ -27,9 +27,9 @@
 
 /**
  * @swagger
- * /api/image_download/{id}:
- *   get:
- *     summary: Get student image by ID.
+ * /api/delete_student_image/{id}:
+ *   delete:
+ *     summary: Delete student image by ID.
  *     description: Retrieve a student's image by its ID.
  *     tags:
  *       - Student Image

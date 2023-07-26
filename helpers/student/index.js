@@ -31,14 +31,14 @@ let studentGetById = async (req, res) => {
   const studentId = req.params.id;
   try {
     // Query the student by the 'id' field
-    const student = await student.findOne({ id: studentId });
+    const studentData = await student.findOne({ _id: studentId });
 
-    if (!student) {
+    if (!studentData) {
       return res.status(404).json({ error: 'Student not found' });
     }
 
     // Student found, return the student data
-    res.json(student);
+    res.json(studentData);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }
